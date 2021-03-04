@@ -1,14 +1,14 @@
 html{
-    height: 100%; /* will take up the whole space of the page no matter how large the user extends the page */
+    height: 100%; 
 }
 
 * {
-    margin: 0; /* can add more (with 'px's and will add margins in clockwise */
+    margin: 0; 
     padding: 0;
 }
 
 body {
-    font: normal 0.80em arial, sans-serif; /* m is a relative measure; 78% of default size */
+    font: normal 0.80em arial, sans-serif; 
     background: rgb(5, 22, 72);
     color: #555;
 }
@@ -49,28 +49,28 @@ h6 {
     color: #888;
 }
 
-a, a:hover { /* what happens when you hover over a link */ 
+a, a:hover { 
     outline: none;
     color: #111;
     text-decoration: underline;
 }
 
 a:hover {
-    text-decoration: none;  /* removes underline when hovering on text */
+    text-decoration: none;  
 }
 
 ul {
     margin: 2px 0 22px 17px;
 }
 
-ul li { /* said li is child of ul */
+ul li { 
     list-style-type: circle;
     margin: 0 0 6px 0;
     padding: 0 0 2px 2px;
 }
 
-#main, #header, #logo, #menubar, #site_content, #footer { /* # means referencing the id tag */ 
-    margin-left: auto; /* centers the text because in auto */ 
+#main, #header, #logo, #menubar, #site_content, #footer { 
+    margin-left: auto;
     margin-right: auto;
 }  
 
@@ -80,13 +80,12 @@ ul li { /* said li is child of ul */
 
 #header {
     width: 1000px;
-    /* background: url(images/back.png) repeat-x;  */
 }
 
 #logo {
     width: 1000px;
-    background: url(images/G20Italy.png);
-    position: relative; /* inside the box */
+    background: url(G20Italy.png);
+    position: relative; 
     height: 300px;
 
 }
@@ -109,7 +108,7 @@ ul li { /* said li is child of ul */
     text-decoration: none;
 }
 
-.logo_color {     /* use a period to reference a class*/ 
+.logo_color {  
     color: #555;
 }
 
@@ -124,20 +123,20 @@ ul li { /* said li is child of ul */
     width: 980px;
     height: 35px;
     padding: 8px 0 0 0;
-    margin: -45px 0 0 0; /* moves menu up */
+    margin: -45px 0 0 0; 
     position: relative;
-    z-index: 1; /* bring it out of the page on top of other elements */
+    z-index: 1; 
     float: right;
 }
 
-ul#menu {  /* same as #menu */
+ul#menu {  
     float: right;
     margin: 0;
 
 }
 
-ul#menu li { /* li are block level elements (so treated individually); this section makes the menu horizontal */
-    float: left;  /* (floats to the top left; can do because they are block level) */
+ul#menu li {
+    float: left;  
     margin: 5px 0 0 0;
     padding: 0 0 0 6px;
     list-style: none;
@@ -179,7 +178,7 @@ ul#menu li a:hover {
 }
 
 .sidebar {
-    float: right;  /* if there is space in the right, it'll float there ? */
+    float: right;  
     width: 198px;
     padding: 20px 25px 15px 15px;
 }
@@ -198,7 +197,7 @@ ul#menu li a:hover {
 .sidebar li a, .sidebar li a:hover {
     padding: 0 0 0 30px;
     display: block;
-    background: transparent url(images/bullet.png) no-repeat left center;
+    background: transparent url(bullet.png) no-repeat left center;
 }
 
 .sidebar li a.selected {
