@@ -1,4 +1,12 @@
-### Hi there 👋
+## About This Project
+
+The [G20](https://www.g20.org/) consists of 20 of the world's major economies, with its members accounting for "more than 80% of world GDP, 75% of global trade and 60% of the population of the planet." 
+
+For this project, we will be looking at the economic spending of 12 of these members. This project constitutes an investigation into how these 12 countries spend on eduction, healthcare and national defence -- three important indicators that bolster and secure the economic and social well-being of a nation.
+
+### G20 Members for this Project:
+
+Argentina, Australia, Brazil, China, Germany, Indonesia, Italy, Japan, Mexico, Russia, United States, United Kingdom.
 
 <!--
 **s-guevara/s-guevara** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
