@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G20 Education Spending</title>
+    <link rel='stylesheet' href='style.css'>
+    <script src='https://www.gstatic.com/charts/loader.js'></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart','geochart'] });
+        google.charts.setOnLoadCallback(drawSheets);
+
+        function drawSheets() {
+            drawSheetName('edu_exp', 'SELECT A,I', avgEduResponseHandler);
+            drawSheetNameRange('edu_exp_t', 'SELECT A1:L8', eduResponseHandler);
+            drawSheetName('edu_per_gdp', 'SELECT A,E,F,G,H', eduGDPResponseHandler);
+            drawSheetName('edu_gdp_percap', 'SELECT A,B,C', eduGDPperCapResponseHandler);
+            drawSheetName('edu_exp', 'SELECT A,J', growthPercentResponseHandler);
+            drawSheetName('edu_exp', 'SELECT A,K', growthUSDResponseHandler);
+
+        } // drawSheets
+
+        function drawSheetName(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&headers=1&tq=' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetName
+
+        function drawSheetNameRange(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetNameRange
+
+        function avgEduResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                colorAxis: { colors: ['#6698e3', '#0845a1'] },
+                title: 'Average Education Spending (2011-2017)'
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('avg_edu_exp_div'))
+            chart.draw(data, options)
+        } // avgEduResponseHandler
+
+        function eduResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                title: 'Education Spending by Country',
+                hAxis: { title: 'Year' },
+                vAxis: { title: 'Spending (millions USD)' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('edu_exp_div'))
+            chart.draw(data, options)
+        } // eduResponseHandler
+
+        function eduGDPResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({ column: 1, desc: false });
+
+            var options = {
+                title: 'Education Expenditure as a Percent of GDP',
+                hAxis: {title : 'Country'},
+                vAxis: {title : 'Spending (%)'}
+            };
+
+            var formatter = new google.visualization.NumberFormat({
+                fractionDigits: 2
+            });
+            formatter.format(data, 1)
+            formatter.format(data, 2)
+            formatter.format(data, 3)
+            formatter.format(data, 4);
+
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0,1,2,3,4, {
+                calc: function (dt, row) {
+                    return Math.floor(dt.getFormattedValue(row, 4)) + '%';
+                },
+                sourceColumn: 1,
+                type: 'string',
+                role: 'annotation'
+            }]);
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('edu_gdp_div'));
+            chart.draw(view, options);
+        } // eduGDPResponseHandler
+
+        function eduGDPperCapResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                legend: 'none',
+                bars: 'horizontal',
+                isStacked: true,
+                annotation: { alwaysOutside: true },
+                title: 'Education per Capita versus GDP per Capita (2017)',
+                vAxis: { title: 'Country' },
+                hAxis: { title: 'Spending (USD)' }
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById('edu_gdp_percap_div'))
+            chart.draw(data, options)
+        } // eduGDPperCapResponseHandler
+
+
+        function growthPercentResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: false});
+
+            var options = {
+                title: 'Fastest Growing in Educational Spending',
+                legend: 'none',
+                hAxis: {title : 'Country'},
+                vAxis: {title : 'Growth (%)'}
+            };
+
+            var formatter = new google.visualization.NumberFormat({
+                fractionDigits: 2
+            });
+            formatter.format(data, 1);
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('growth_percent_div'));
+            chart.draw(data, options);
+        } // growthPercentResponseHandler
+
+        function growthUSDResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: false});
+
+            var options = {
+                title: 'Fastest Growing in Educational Spending in USD',
+                legend: 'none',
+                hAxis: {title : 'Country'},
+                vAxis: {title : 'Growth ($)'}
+            };
+
+            var formatter = new google.visualization.NumberFormat({
+                fractionDigits: 2
+            });
+            formatter.format(data, 1);
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('growth_usd_div'));
+            chart.draw(data, options);
+        } // growthUSDResponseHandler
+
+    </script>
+</head>
+
+<body>
+    <div id='main'>
+        <div id='header'>
+            <div id='logo'>
+                <div id='logo_text'>
+                    <h1><a href='index.html'>Economic Spending by G20 Members</a></h1>
+                    <!-- href link pointing to self; span is to implement css -->
+                    <h2>Healthcare, Education & Military</h2>
+                </div><!-- logo_text -->
+            </div><!-- logo -->
+            <div id='menubar'>
+                <ul id='menu'>
+                    <li><a href='index.html'>Home</a></li>
+                    <li><a href='healthcareexp.html'>Healthcare</a></li>
+                    <li class='selected'><a href='educationexp.html'>Education</a></li>
+                    <li><a href='militaryexp.html'>Military</a></li>
+                </ul><!-- menu -->
+            </div><!-- menu -->
+        </div><!-- header -->
+        <div id='site_content'>
+            <div id='military_content'>
+                <h1>Education Spending</h1>
+                <br>
+                <br>
+                <p>
+                    Education is one of the most important economic indicators of a nation: greater investment in human
+                    capital is directly proportional to the growth of an economy. Thus, in this project we're also interested 
+                    in looking at how much is spent on education by our group of G02 members.
+                </p>
+                <p>
+                    From the graph below, we can see most of our members roughly spend at the lower end of the spectrum, with
+                    only a few -- Germany, the UK, Brazil, and the US -- spending over $100 billion dollars a year on average 
+                    on education. The US by far exceeds it counterparts as it spent over $880 billion on education.
+                    <br>
+                    One important note to make in this section on education is the elephant in the room: We're missing information
+                    on China. In fact, there's no recent and readily available public data from China on their education expenditures.
+                    We do know, however, that as China pushes for greater global prominence, it has been attracting more talent to
+                    its universities. In fact, along with the US, it hosts a great number of the top universities listed under the
+                    <a href = 'https://cwur.org/2019-2020.php'>Center for World University Rankings list</a>.
+                </p>
+                <br>
+                <div id='avg_edu_exp_div' style='width: 900px; height: 400px;'></div> <!-- Average Education Spending Geo Chart-->
+                <br>
+                <br>
+                <br>
+                <p>
+                    As we saw from our map above, the US spends the most by far on education in nominal dollar value, and we can see that
+                    better with our time series chart below. Moreover, we can see that the US has also been steadily increasing its
+                    spending over the period between 2011 and 2017. All other nations cluster below the $300 billion dollar threshold.
+                </p>
+                <br>
+                <div id='edu_exp_div' style='width: 900px; height: 400px;'></div> <!-- Education Spending Line Chart-->
+                <br>
+                <br>
+                <br>
+                <p>
+                    In relation to GDP, however, the US lands just about at center of the list. Compared to the rest of our list, Brazil
+                    spends the most as a share of their GDP, just above 6%, followed by the UK at almost 5.5%. While most countries look
+                    to be maintainin their share of GDP on education, Russia appears to have jumped its investment in education, at least
+                    between 2016 and 2017.
+                </p>
+                <br>
+                <div id='edu_gdp_div' style='width: 900px; height: 400px;'></div>  <!-- Education Spending per GDP Column Chart -->
+                <br>
+                <p>
+                    As mentioned, no data on China is available for our exploration and analysis on this project, however, there is data 
+                    available from <a href='https://www.unicef.cn/en/figure-826-government-expenditure-education-and-its-percentage-gdp-19922017'>
+                        UNICEF China</a> regarding the country's spending as a percent of GDP (below). While China was still on the lower end 
+                        of the group on education spending as a share of GDP up to 2017, we can clearly see that over the past decades the country
+                        has made exponentially grown their investment. 
+                </p>
+                <br>
+                <img src="images/ChinaUnicef.png" id ='china_unicef' style='float:middle' width='700' height ='400'/>
+                <br>
+                <br>
+                <br>
+                <p>
+                    Looking at the education spending per capita in relation to GDP per capita, we see education is only a small ratio of GDP for
+                    each country.
+                </p>
+                <br>
+                <div id='edu_gdp_percap_div' style='width: 900px; height: 400px;'></div>  <!-- Education v GDP per Capita Bar Chart-->
+                <br>
+                <p>
+                    Between 2017 and 2011, Argentina has had the most increase in education expenditures as a percent compared to all other 
+                    countries on our list, followed by the US. Japan has seen the greatest shrinkage of spending between the two years.
+                </p>
+                <br>
+                <br>
+                <br>
+                <div id='growth_percent_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <p>
+                    Nominally, the US has increased its spending significantly while Japan has also shrunk spending nominally, by  almost 
+                    $70 billion, twice as much as the US has increased its spending. 
+                </p>
+                <br>
+                <div id='growth_usd_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+            </div><!-- military_content -->
+        </div><!-- site_content -->
+        <div id='content_footer'>
+            <div id='footer'>
+                &copy;
+                <script>var d = new Date(); document.write(d.getFullYear())</script>
+                <a href='http://validator.w3.org/check?uri=referer'>HTML5</a>
+                <a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS3</a>
+                | Stefani Guevara
+                <div id='logo_credit'>
+                    <h7>
+                        G20 Logo by the <a href='http://www.dt.mef.gov.it/en/tema_del_mese/tema_mese0024.html'>Italian
+                            Department of the Treasury</a>
+                    </h7>
+                </div>
+            </div><!-- footer -->
+        </div><!-- content_footer -->
+    </div><!-- main -->
+</body>
+
+</html>

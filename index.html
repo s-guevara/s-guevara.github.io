@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G20 Spending</title>
+    <link rel='stylesheet' href='style.css'>
+    <script src='https://www.gstatic.com/charts/loader.js'></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart','geochart'] });
+        google.charts.setOnLoadCallback(drawSheets);
+
+        function drawSheets() {
+            drawSheetName('gdp', 'SELECT A,J', gdpMapResponseHandler);
+            drawSheetName('population', 'SELECT A,J', popMapResponseHandler);
+            drawSheetNameRange('gdp_t', 'SELECT A1:M10', gdpResponseHandler);
+            drawSheetNameRange('pop_t', 'SELECT A1:M10', popResponseHandler);
+            drawSheetNameRange('pop_no_china', 'SELECT A1:L10', popNoChinaResponseHandler);
+        } // drawSheets
+
+        function drawSheetName(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&headers=1&tq=' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetName
+
+        function drawSheetNameRange(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetNameRange
+
+        function gdpMapResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                colorAxis: { colors: ['#6698e3', '#0845a1'] }, // orange to blue
+                title: 'GDP of the Top 12 Countries (2019)'
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('gdp_map_div'))
+            chart.draw(data, options)
+        } // gdpMapResponseHandler
+
+        function popMapResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                colorAxis: { colors: ['#c76f7c', '#630f1b'] }, // orange to blue
+                title: 'Population of the Top 12 Countries (2019)'
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('pop_map_div'))
+            chart.draw(data, options)
+        } // popMapResponseHandler
+
+        function gdpResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                legend: 'none',
+                curveType: 'function',
+                title: 'GDP by country',
+                vAxis: { title: 'Country' },
+                hAxis: { title: 'GDP (Billions)' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('gdp_div'))
+            chart.draw(data, options)
+        } // gdpResponseHandler
+
+        function popResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                legend: 'none',
+                curveType: 'function',
+                title: 'Population by Country',
+                vAxis: { title: 'Country' },
+                hAxis: { title: 'Population (Millions)' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('pop_div'))
+            chart.draw(data, options)
+        } // popResponseHandler
+
+        function popNoChinaResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                legend: 'none',
+                curveType: 'function',
+                title: 'Population by Country, Excluding China',
+                vAxis: { title: 'Country' },
+                hAxis: { title: 'Population (Millions)' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('pop_nochina_div'))
+            chart.draw(data, options)
+        }
+
+    </script>
+</head>
+
+<body>
+    <div id='main'>
+        <div id='header'>
+            <div id='logo'>
+                <div id='logo_text'>
+                    <h1><a href='index.html'>Economic Spending by G20 Members</a></h1>
+                    <!-- href link pointing to self; span is to implement css -->
+                    <h2>Healthcare, Education & Military</h2>
+                </div><!-- logo_text -->
+            </div><!-- logo -->
+            <div id='menubar'>
+                <ul id='menu'>
+                    <li class='selected'><a href='index.html'>Home</a></li>
+                    <li><a href='healthcareexp.html'>Healthcare</a></li>
+                    <li><a href='educationexp.html'>Education</a></li>
+                    <li><a href='militaryexp.html'>Military</a></li>
+                </ul><!-- menu -->
+            </div><!-- menu -->
+        </div><!-- header -->
+        <div id='site_content'>
+            <div class='sidebar'>
+                <h2>Author</h2>
+                <h4>Stefani D. Guevara</h4>
+                <h5>MS Data Science Candidate, GWU</h5>
+                <p></p>
+                <h4>Project 1</h4>
+                <p>DATS 6401: Data Visualization </p>
+                <p></p>
+                <h2>Sources</h2>
+                <li><a href='https://www.g20.org/en/il-g20.html'>More about the G20</a></li>
+                <li><a href='https://data.worldbank.org'>World Bank Open Data</a></li>
+                <li><a
+                        href='https://www.unicef.cn/en/figure-826-government-expenditure-education-and-its-percentage-gdp-19922017'>China's
+                        Educational Expenditures</a></li>
+                <li><a href = 'https://fred.stlouisfed.org/series/G160291A027NBEA'>US Education Spending (FRED)</a></li>
+                <br>
+                <br>
+                <br>
+            </div><!-- sidebar #Class names can be reused; ids are unique-->
+
+            <div id='content'>
+                <h1>About This Project</h1>
+                <p>
+                    The <a href='https://www.g20.org/en/il-g20.html'>G20</a> consists of 20 of the world's major
+                    economies,
+                    with its members accounting for "more than 80% of world GDP, 75% of global trade and 60% of the
+                    population of the planet."
+                </p>
+                <p>
+                    For this project, we will be looking at the economic spending of 12 of these members. This project
+                    constitutes an investigation into how these 12 countries spend on eduction, healthcare and national defence -- 
+                    three important indicators that bolster and secure the economic and social well-being of a nation. 
+                </p>
+                <h2>G20 Members for this Project:</h2>
+                <p>
+                    Argentina, Australia, Brazil, China, Germany, Indonesia, Italy, Japan, Mexico, Russia, United States,
+                    United Kingdom.
+                </p>
+                <br>
+                <br>
+                <br>
+                <br>
+                <h3>Overview of the Selected Countries</h3>
+                <br>
+                <p>
+                    Our selected countries cover almost every section of the globe, with at least two members from each continent with
+                    the exception of Africa. These nations have a population ranging between 25 million people (Australia) to 1.4 billion (China).
+                </p>
+                <div id='pop_map_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+                <p>
+                    Their individual GDP also ranges from $445 billion (Argentina) to $21.4 trillion (United States). Our map below
+                    shows how distributed the GDP across the members is. 
+                    <br>
+                    We'll be looking at both the GDP of our members and their population relative to our 3 variables of interest in this project. 
+                </p>
+                <div id='gdp_map_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+                <p>
+                    We'll also look at changes for these countries over time. As foundation, the below charts look at the GDP and population 
+                    of each country over the nine year period between 2011 and 2019. The first chart clearly shows the GDP growth 
+                    between the US and China as they compete for global economic leadership.
+                </p>
+                <div id='gdp_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <div id='pop_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <p>
+                    We remove China from this last chart to take a closer look at the population spread between the other 11 countries and changes
+                    over the period. While most stay relatively constant, we see the United States, Indonesia and Brazil have
+                    experienced fair growth in their populations.
+                </p>
+                <div id='pop_nochina_div' style='width: 900px; height: 400px;'></div>
+                <br>
+            </div><!-- content -->
+        </div><!-- site_content -->
+        <div id='content_footer'>
+            <div id='footer'>
+                &copy;
+                <script>var d = new Date(); document.write(d.getFullYear())</script>
+                <a href='http://validator.w3.org/check?uri=referer'>HTML5</a>
+                <a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS3</a>
+                | Stefani Guevara
+                <div id='logo_credit'>
+                    <h7>
+                        G20 Logo by the <a href='http://www.dt.mef.gov.it/en/tema_del_mese/tema_mese0024.html'>Italian
+                            Department of the Treasury</a>
+                    </h7>
+                </div>
+            </div><!-- footer -->
+        </div><!-- content_footer -->
+    </div><!-- main -->
+</body>
+
+</html>

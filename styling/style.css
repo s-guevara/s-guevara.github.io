@@ -1,0 +1,271 @@
+html{
+    height: 100%; /* will take up the whole space of the page no matter how large the user extends the page */
+}
+
+* {
+    margin: 0; /* can add more (with 'px's and will add margins in clockwise */
+    padding: 0;
+}
+
+body {
+    font: normal 0.80em arial, sans-serif; /* m is a relative measure; 78% of default size */
+    background: rgb(5, 22, 72);
+    color: #555;
+}
+
+p {
+    font: normal 115% 'century gothic', arial, sans-serif; 
+    padding: 0 0 10px 0;
+    line-height: 1.7em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font: normal 180% 'century gothic', arial, sans-serif; 
+    color: #111;
+    margin: 0 0 15px 0;
+    padding: 15px 0 5px 0;
+}
+
+h2 {
+    color: #111;
+    font: normal 150% 'century gothic', arial, sans-serif;
+    padding: 15px 0 0 0;
+}
+
+h4, h5, h6 {
+    margin: 0;
+    padding: 0 0 5px 0;
+    font: normal 120% arial, sans-serif;
+    color: #555;
+}
+
+h5, h6 {
+    font: italic 95% arial, sans-serif;
+    padding: 0 0 15px 0;
+    color: #000;
+}
+
+h6 {
+    color: #888;
+}
+
+a, a:hover { /* what happens when you hover over a link */ 
+    outline: none;
+    color: #111;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;  /* removes underline when hovering on text */
+}
+
+ul {
+    margin: 2px 0 22px 17px;
+}
+
+ul li { /* said li is child of ul */
+    list-style-type: circle;
+    margin: 0 0 6px 0;
+    padding: 0 0 2px 2px;
+}
+
+#main, #header, #logo, #menubar, #site_content, #footer { /* # means referencing the id tag */ 
+    margin-left: auto; /* centers the text because in auto */ 
+    margin-right: auto;
+}  
+
+#main {
+    width: 1000px;
+}
+
+#header {
+    width: 1000px;
+    /* background: url(images/back.png) repeat-x;  */
+}
+
+#logo {
+    width: 1000px;
+    background: url(images/G20Italy.png);
+    position: relative; /* inside the box */
+    height: 300px;
+
+}
+
+#logo_text {
+    position: absolute;
+    right: 30px;
+}
+
+#logo h1, #logo h2 {
+    font: normal 300% 'century gothic', arial, sans-serif;
+    border-bottom: 0;
+    text-transform: none;
+    margin: 0;
+}
+
+#logo_text h1, #logo_text h1 a, #logo_text h1 a:hover {
+    padding: 110px 0 0 0;
+    color: rgb(3, 13, 43);
+    text-decoration: none;
+}
+
+.logo_color {     /* use a period to reference a class*/ 
+    color: #555;
+}
+
+#logo_text h2 {
+    font-size: 150%;
+    padding: 10px;
+    margin: 0 0 0 370px;
+    color: #555;
+}
+
+#menubar {
+    width: 980px;
+    height: 35px;
+    padding: 8px 0 0 0;
+    margin: -45px 0 0 0; /* moves menu up */
+    position: relative;
+    z-index: 1; /* bring it out of the page on top of other elements */
+    float: right;
+}
+
+ul#menu {  /* same as #menu */
+    float: right;
+    margin: 0;
+
+}
+
+ul#menu li { /* li are block level elements (so treated individually); this section makes the menu horizontal */
+    float: left;  /* (floats to the top left; can do because they are block level) */
+    margin: 5px 0 0 0;
+    padding: 0 0 0 6px;
+    list-style: none;
+}
+
+ul#menu li a {  
+    letter-spacing: 0em;
+    font: normal 130% arial, sans-serif;
+    text-emphasis: uppercase;
+    display: block;
+    float: left;
+    height: 20px;
+    text-decoration: none;
+    padding: 9px 22px 5px 16px;
+    text-align: center;
+    color: rgb(3, 13, 43);
+    border: 0;
+}
+
+ul#menu li.selected a {
+    height: 25px;
+    color: #111;
+    padding: 7px 22px 5px 16px;
+}
+
+ul#menu li.selected {
+    margin: 7px 0 0 0;
+    background: #f8f8f8;
+}
+
+ul#menu li a:hover {
+    color:#111;
+}
+
+#site_content {
+    width: 1000px;
+    overflow: hidden;
+    background: #f8f8f8;
+}
+
+.sidebar {
+    float: right;  /* if there is space in the right, it'll float there ? */
+    width: 198px;
+    padding: 20px 25px 15px 15px;
+}
+
+.sidebar ul {
+    width: 178px;
+    padding: 4px 0 0 0;
+    margin: 4px 0 30px 0;
+}
+
+.sidebar li {
+    list-style: none;
+    padding: 0 0 7px 0;
+}
+
+.sidebar li a, .sidebar li a:hover {
+    padding: 0 0 0 30px;
+    display: block;
+    background: transparent url(images/bullet.png) no-repeat left center;
+}
+
+.sidebar li a.selected {
+    color: #444;
+    text-decoration: none;
+}
+
+#content {
+    text-align: left;
+    width: 600px;
+    float: left;
+    padding: 20px 0 15px 30px;
+}
+
+#content ul {
+    margin: 2px 0 22px 0;  
+}
+
+#content ul li { 
+    list-style: none;
+    margin: 0 0 6px 0;
+    padding: 0 0 0.5px 0; 
+    line-height: 2em; 
+}
+
+#footer {
+    width: 1000px;
+    height: 33px;
+    padding: 20px 0 4px 0;
+    text-align: center;
+    background: rgb(3, 13, 43);;
+    color: #aaa;
+    border-top: 1px solid #fff;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 80%;
+}
+
+#footer a , #footer a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+#logo_credit a {
+    padding: 5px 0 5px 0;
+}
+
+#military_content {
+    text-align: left;
+    width: 950px;
+    float: left;
+    padding: 20px 0 15px 30px;
+}
+
+#military_content ul {
+    margin: 2px 0 22px 0;  
+}
+
+#military_content ul li {  
+    list-style: none;
+    margin: 0 0 6px 0;
+    padding: 0 0 0.5px 0;
+    line-height: 2em; 
+}
+
+#china_unicef {
+    text-align: center;
+    display: block;
+    margin: auto;
+}
