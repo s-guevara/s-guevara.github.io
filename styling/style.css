@@ -85,7 +85,7 @@ ul li { /* said li is child of ul */
 
 #logo {
     width: 1000px;
-    background: url(../images/G20Italy.png);
+    background: url(main/images/G20Italy.png);
     position: relative; /* inside the box */
     height: 300px;
 
