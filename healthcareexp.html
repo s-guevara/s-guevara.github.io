@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G20 Healthcare Spending</title>
+    <link rel='stylesheet' href='style.css'>
+    <script src='https://www.gstatic.com/charts/loader.js'></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart', 'geochart'] });
+        google.charts.setOnLoadCallback(drawSheets);
+
+        function drawSheets() {
+            drawSheetName('healthcare_exp', 'SELECT A,J', avgHealthResponseHandler);
+            drawSheetNameRange('healthcare_exp_t', 'SELECT A1:M10', healthcareResponseHandler); // NEED TO ADJUST TO HEALTH
+            drawSheetName('health_per_gdp', 'SELECT A,F,G,H,I', healthGDPResponseHandler);
+            drawSheetName('health_gdp_percap', 'SELECT A,B,C', healthGDPperCapResponseHandler);
+            drawSheetName('healthcare_exp', 'SELECT A,K', growthPercentResponseHandler);
+            drawSheetName('healthcare_exp', 'SELECT A,L', growthUSDResponseHandler);
+        } // drawSheets
+
+        function drawSheetName(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&headers=1&tq=' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetName
+
+        function drawSheetNameRange(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetNameRange
+
+        function avgHealthResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                colorAxis: { colors: ['#6698e3', '#0845a1'] },
+                title: 'Average Healthcare Spending (2011-2018)'
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('avg_health_exp_div'))
+            chart.draw(data, options)
+        } // avgHealthResponseHandler
+
+        function healthcareResponseHandler(response) {
+            var data = response.getDataTable();
+            
+            var options = {
+                title: 'Healthcase Spending by Country',
+                hAxis: { title: 'Year' },
+                vAxis: { title: 'Spending (millions USD)' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('health_exp_div'))
+            chart.draw(data, options)
+        } // healthcareResponseHandler
+
+        function healthGDPResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: false});
+
+            var options = {
+                title: 'Healthcare Expenditure as a Percent of GDP',
+                hAxis: {title : 'Country'},
+                vAxis: {title : 'Spending (%)'}
+            };
+
+            var formatter = new google.visualization.NumberFormat({
+                fractionDigits: 2
+            });
+            formatter.format(data, 1)
+            formatter.format(data, 2)
+            formatter.format(data, 3)
+            formatter.format(data, 4);
+
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0,1,2,3,4, {
+                calc: function (dt, row) {
+                    return Math.ceil(dt.getFormattedValue(row, 2)) + '%';
+                },
+                sourceColumn: 1,
+                type: 'string',
+                role: 'annotation'
+            }]);
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('health_gdp_div'));
+            chart.draw(view, options);
+        } // healthGDPResponseHandler
+
+        function healthGDPperCapResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 2, desc: true});
+
+            var options = {
+                legend: 'none',
+                bars: 'horizontal',
+                isStacked: true,
+                annotation: { alwaysOutside: true },
+                title: 'Healthcare Spending per Capita versus GDP per Capita (2018)',
+                vAxis: { title: 'Country' },
+                hAxis: { title: 'Spending (USD)' }
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById('health_gdp_percap_div'))
+            chart.draw(data, options)
+        } // milGDPperCapResponseHandler
+
+        function growthPercentResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: false});
+
+            var options = {
+                title: 'Fastest Growing in Healthcare as a %',
+                legend: 'none',
+                hAxis: {title : 'Country'},
+                vAxis: {title : 'Growth (%)'}
+            };
+
+            var formatter = new google.visualization.NumberFormat({
+                fractionDigits: 2
+            });
+            formatter.format(data, 1);
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('growth_percent_div'));
+            chart.draw(data, options);
+        } // growthPercentResponseHandler
+
+        function growthUSDResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: false});
+
+            var options = {
+                title: 'Fastest Growing in Healthcare in USD',
+                legend: 'none',
+                hAxis: {title : 'Country'},
+                vAxis: {title : 'Growth ($)'}
+            };
+
+            var formatter = new google.visualization.NumberFormat({
+                fractionDigits: 2
+            });
+            formatter.format(data, 1);
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('growth_usd_div'));
+            chart.draw(data, options);
+        } // growthUSDResponseHandler
+
+    </script>
+</head>
+
+<body>
+    <div id='main'>
+        <div id='header'>
+            <div id='logo'>
+                <div id='logo_text'>
+                    <h1><a href='index.html'>Economic Spending by G20 Members</a></h1>
+                    <!-- href link pointing to self; span is to implement css -->
+                    <h2>Healthcare, Education & Military</h2>
+                </div><!-- logo_text -->
+            </div><!-- logo -->
+            <div id='menubar'>
+                <ul id='menu'>
+                    <li><a href='index.html'>Home</a></li>
+                    <li class='selected'><a href='healthcareexp.html'>Healthcare</a></li>
+                    <li><a href='educationexp.html'>Education</a></li>
+                    <li><a href='militaryexp.html'>Military</a></li>
+                </ul><!-- menu -->
+            </div><!-- menu -->
+        </div><!-- header -->
+        <div id='site_content'>
+            <div id='military_content'>
+                <h1>Healthcare Spending</h1>
+                <br>
+                <br>
+                <p>
+                    Of the twelve G20 countries we look at in this project, we see that the United States is by far the greatest 
+                    spender in healthcare, having spent almost $3 million on average between 2011 and 2018. All other countries 
+                    are largely on the lower end of the spectrum. This isn't entirely surprising give the population of the US
+                    versus most other countries. China, however, does have a much larger population than the US, but still sits 
+                    at the lower half of the spectrum in terms of dollars spent nationally on healthcare.
+                </p>
+                <div id='avg_health_exp_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+                <p>
+                    In an alternative view, with the below chart we can better see just how much the US spends above the next
+                    largest spenders: China and Japan -- which is well above $2 million more. Notably, almost all of these
+                    countries are rather stagnant in their spending -- that is, there hasn't been much change over the years.
+                    It will be interesting to see how this chart looks in the next couple of years when data becomes available 
+                    on healthcare spending changes due to the global pandemic.
+                </p>
+                <br>
+                <div id='health_exp_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+                <p>
+                    Given the US's GDP and population, it's easy to understand the size of spending in healthcare. Yet, in terms of
+                    percentage of GDP, it is still the greatest spender in healthcare compared to all other nations on our list.
+                    Across the 4 years between 2015 and 2018 it's remained the largest spender, and just like the other comparable
+                    countries, it remained steady in its allocation of funding to healthcare as a percent of GDP.
+                </p>
+                <br>
+                <div id='health_gdp_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+                <p>
+                    In the below chart we're comparing the healthcare expenditures per capita against GDP per capita, and we see
+                    the US leads in the share of healthcare per person weighed against the gdp per person. Germany follows suit in 
+                    relative terms. Interesting, Indonesia seems to spend practically a negligible amount on healthcare. In reality,
+                    the country spends shy of over $100 per person.
+                </p>
+                <br>
+                <div id='health_gdp_percap_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+                <p>
+                    The next two graphs show the fastest growing and fastest shrinking countries on healtchare spending:
+                </p>
+                <div id='growth_percent_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <p>
+                    The chart above shows China has had the most increase in healthcare spending, and if we look back at the time
+                    series plot above, it makes sense. With it's rapid economic growth throughout the last decades in push to compete
+                    with the US in the global economy, it's conherent that they would also be eager to provide more healthcare
+                    to their population as they increase the standard of living in the country. In fact, just recently China declared
+                    the end of extreme poverty -- no doubt healthcare funding plays a role in that acheivement.
+                    <br>
+                    In comparison, looking at the chart below, while China still shows large growth in fixed dollar terms between 2011
+                    and 2018, the US has also incresed its healthcare spending in dollars by almost a million dollars.
+                </p>
+                <br>
+                <div id='growth_usd_div' style='width: 900px; height: 400px;'></div>
+                <br>
+                <br>
+                <br>
+            </div><!-- military_content -->
+        </div><!-- site_content -->
+        <div id='content_footer'>
+            <div id='footer'>
+                &copy;
+                <script>var d = new Date(); document.write(d.getFullYear())</script>
+                <a href='http://validator.w3.org/check?uri=referer'>HTML5</a>
+                <a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS3</a>
+                | Stefani Guevara
+                <div id='logo_credit'>
+                    <h7>
+                        G20 Logo by the <a href='http://www.dt.mef.gov.it/en/tema_del_mese/tema_mese0024.html'>Italian
+                            Department of the Treasury</a>
+                    </h7>
+                </div>
+            </div><!-- footer -->
+        </div><!-- content_footer -->
+    </div><!-- main -->
+</body>
+
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G20 Military Spending</title>
+    <link rel='stylesheet' href='style.css'>
+    <script src='https://www.gstatic.com/charts/loader.js'></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart','geochart'] });
+        google.charts.setOnLoadCallback(drawSheets);
+
+        function drawSheets() {
+            drawSheetName('military_exp', 'SELECT A,K', avgMilitaryResponseHandler);
+            drawSheetNameRange('military_exp_t', 'SELECT A1:M10', militaryResponseHandler);
+            drawSheetName('military_per_gdp', 'SELECT A,E,F,G,H', militaryGDPResponseHandler);
+            drawSheetName('mil_gdp_percap', 'SELECT A,B,C', milGDPperCapResponseHandler);
+            drawSheetName('edumilgdp_percap', 'SELECT A,B,C,D', eduMilGDPResponseHandler);
+            drawSheetName('healthmilgdp_percap', 'SELECT A,B,C,D', healthMilGDPResponseHandler);
+            drawSheetName('eduhealthmilsharegdp', 'SELECT A,B,C,D', eduHealthMilPResponseHandler);
+
+        } // drawSheets
+
+        function drawSheetName(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&headers=1&tq=' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetName
+
+        function drawSheetNameRange(sheetName, query, responseHandler) {
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/1G7lTBVmXdCG50A2jVvw8VHGQ1FRwW4ukK3uYq6dQkvQ/gviz/tq?sheet='
+                + sheetName + '&' + queryString);
+
+            query.send(responseHandler)
+        } // drawSheetNameRange
+
+        function avgMilitaryResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                colorAxis: { colors: ['#6698e3', '#0845a1'] },
+                title: 'Average Military Spending (2011-2019)'
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('avg_mil_exp_div'))
+            chart.draw(data, options)
+        }
+
+        function militaryResponseHandler(response) {
+            var data = response.getDataTable();
+
+            var options = {
+                title: 'Military Spending by Country',
+                hAxis: { title: 'Year' },
+                vAxis: { title: 'Spending (millions USD)' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('mil_exp_div'))
+            chart.draw(data, options)
+        } // militaryResponseHandler
+        
+        function militaryGDPResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: false});
+            
+            var options = {
+                title: 'Military Expenditure as a Percent of GDP',
+                hAxis: {title : 'Country'},
+                vAxis: {title : 'Spending (%)'}
+            };
+
+            var formatter = new google.visualization.NumberFormat({
+                fractionDigits: 2
+            });
+            formatter.format(data, 1)
+            formatter.format(data, 2)
+            formatter.format(data, 3)
+            formatter.format(data, 4);
+
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0,1,2,3,4, {
+                calc: function (dt, row) {
+                    return Math.ceil(dt.getFormattedValue(row, 1)) + '%';
+                },
+                sourceColumn: 2,
+                type: 'string',
+                role: 'annotation'
+            }]);
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('military_gdp_div'));
+            chart.draw(view, options);
+        } // militaryGDPResponseHandler
+
+        function milGDPperCapResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 2, desc: true});
+
+            var options = {
+                legend: 'none',
+                bars: 'horizontal',
+                isStacked: true,
+                annotation: { alwaysOutside: true },
+                title: 'Military Spending per Capita versus GDP per Capita (2017)',
+                vAxis: { title: 'Country' },
+                hAxis: { title: 'Spending ( USD)' }
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById('mil_gdp_percap_div'))
+            chart.draw(data, options)
+        } // milGDPperCapResponseHandler
+
+        function eduMilGDPResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                title: 'Correlation between Education, Military and GDP per capita (2017)',
+                hAxis: { title: 'Education per capita' },
+                vAxis: { title: 'Military per capita' }
+            };
+
+            var chart = new google.visualization.BubbleChart(document.getElementById('edumilgdp_div'))
+            chart.draw(data, options)
+        } // eduMilGDPResponseHandler
+
+        function healthMilGDPResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                title: 'Correlation between Healthcare, Military and GDP per capita (2017)',
+                hAxis: { title: 'Healtchare per capita' },
+                vAxis: { title: 'Military per capita' }
+            };
+
+            var chart = new google.visualization.BubbleChart(document.getElementById('healthmilgdp_div'))
+            chart.draw(data, options)
+        } // healthMilGDPResponseHandler
+
+        function eduHealthMilPResponseHandler(response) {
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                title: 'Correlation between Education, Healthcare, and Military Spending (2017)',
+                hAxis: { title: 'Education per capita' },
+                vAxis: { title: 'Healthcare per capita' }
+            };
+
+            var chart = new google.visualization.BubbleChart(document.getElementById('eduhealthmil_div'))
+            chart.draw(data, options)
+        } // healthMilGDPResponseHandler
+
+    </script>
+</head>
+
+<body>
+    <div id='main'>
+        <div id='header'>
+            <div id='logo'>
+                <div id='logo_text'>
+                    <h1><a href='index.html'>Economic Spending by G20 Members</a></h1>
+                    <!-- href link pointing to self; span is to implement css -->
+                    <h2>Healthcare, Education & Military</h2>
+                </div><!-- logo_text -->
+            </div><!-- logo -->
+            <div id='menubar'>
+                <ul id='menu'>
+                    <li><a href='index.html'>Home</a></li>
+                    <li><a href='healthcareexp.html'>Healthcare</a></li>
+                    <li><a href='educationexp.html'>Education</a></li>
+                    <li class='selected'><a href='militaryexp.html'>Military</a></li>
+                </ul><!-- menu -->
+            </div><!-- menu -->
+        </div><!-- header -->
+        <div id='site_content'>
+            <div id='military_content'>
+                <h1>Military Spending</h1>
+                <br>
+                <br>
+                <p>
+                    Defense Spending is another economic variable of interest. As one of the most populous countries in the world, with
+                    economic interests across the globe, and with a history of threats of both external and domestic terrorism, the US
+                    is also one of largest spenders in defense. In fact, military expenditures for the US is the highest among the G20 
+                    member countries, as shown in the map below. China has the second highest spending on the military.
+                </p>
+                <div id='avg_mil_exp_div' style='width: 900px; height: 400px;'></div> <!-- Average Military Spending Geo Chart-->
+                <br>
+                <br>
+                <br>
+                <p>
+                    Plotted as a time series, we can see growth in nominal expenditures on defense by China throughout the 
+                    9 year period between 2011 and 2019. In comparison, the US saw a slight dip in spending during the second terms of 
+                    the Obama administration, picking back up after 2017. 
+                </p>
+                <br>
+                <div id='mil_exp_div' style='width: 900px; height: 400px;'></div> <!-- Military Spending Line Chart -->
+                <br>
+                <br>
+                <br>
+                <p>
+                    As a percent of GDP, Russia spends the most of its military, though it appears at least in 2017 the country significantly
+                    dropped its share of spending on the military by over a percentage point, though it had been increasing the share 
+                    between 2014 and 2016.
+                </p>
+                <br>
+                <div id='military_gdp_div' style='width: 900px; height: 400px;'></div> <!-- Military per GDP Column Chart -->
+                <br>
+                <br>
+                <br>
+                <p>
+                    In 2017, the US spent the most on its military compared to the other 11 nations, per person. Compared to its GDP per 
+                    person, it was only a small fraction. Brazil, Mexico, China, and Indonesia spent significantly less on their military per 
+                    capita, dwarfed especially by the per capita revenues and expenditures of the US, Japan, and other European nations.
+                </p>
+                <br>
+                <div id='mil_gdp_percap_div' style='width: 900px; height: 400px;'></div> <!-- Military v GDP per Capita Bar Chart -->
+                <br>
+                <br>
+                <br>
+                <p>
+                    Below we have a correlation map of how countries spend on education compared to the military, as well as their GDP, per capita.
+                    We see those with greater revenues per person in fact spend more on education than their military, including the US. In fact,
+                    all countries, according to the data collected, seem to spend more on education than their military, Russia possibly being an
+                    exception, showing to spend almost equally for each.
+                </p>
+                <br>
+                <div id='edumilgdp_div' style='width: 900px; height: 400px;'></div> <!-- Education, Military, GDP Bubble Chart-->
+                <br>
+                <br>
+                <br>
+                <p>
+                    The correlation chart below compares military and healthcare spending per person, along with GDP per person. Again, we find 
+                    those nations with greater GDP per person spend more on healthcare than the military and cluster around the lower middle of 
+                    our chart. Those with lower GDP per person cluster at the bottom.
+                </p>
+                <br>
+                <div id='healthmilgdp_div' style='width: 900px; height: 400px;'></div> <!-- Healthcare, Military, GDP Bubble Chart-->
+                <br>
+                <br>
+                <br>
+                <p>
+                    Finally, our last correlation map shows how our G20 members spent between military, healthcare, and education per capita in 
+                    2017. Two of our eastern members, Japan and China spend notably more than our other 9 members, but less than the US.
+                </p>
+                <br>
+                <div id='eduhealthmil_div' style='width: 900px; height: 400px;'></div> <!-- Healthcare, Military, GDP Bubble Chart-->
+                <br>
+            </div><!-- military_content -->
+        </div><!-- site_content -->
+        <div id='content_footer'>
+            <div id='footer'>
+                &copy;
+                <script>var d = new Date(); document.write(d.getFullYear())</script>
+                <a href='http://validator.w3.org/check?uri=referer'>HTML5</a>
+                <a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS3</a>
+                | Stefani Guevara
+                <div id='logo_credit'>
+                    <h7>
+                        G20 Logo by the <a href='http://www.dt.mef.gov.it/en/tema_del_mese/tema_mese0024.html'>Italian
+                            Department of the Treasury</a>
+                    </h7>
+                </div>
+            </div><!-- footer -->
+        </div><!-- content_footer -->
+    </div><!-- main -->
+</body>
+
+</html>
